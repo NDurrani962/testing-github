@@ -1,25 +1,23 @@
 pipeline {
     agent any
     stages {
-        /* "Build" and "Test" stages omitted */
-
-        stage('Deploy - Staging') {
-            steps {
-                bat './deploy staging'
-                bat './run-smoke-tests'
-            }
-        }
-
-        stage('Sanity check') {
-            steps {
-                input "Does the staging environment look ok?"
-            }
-        }
-
-        stage('Deploy - Production') {
-            steps {
-                bat './deploy production'
-            }
-        }
+    stage('Install') {
+      steps { sh 'npm install' }
     }
+
+    stage('Test') {
+      parallel {
+        stage('Static code analysis') {
+            steps { sh 'npm run-script lint' }
+        }
+        stage('Unit tests') {
+            steps { sh 'npm run-script test' }
+        }
+      }
+    }
+
+    stage('Build') {
+      steps { sh 'npm run-script build' }
+    }
+  }
 }
