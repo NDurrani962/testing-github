@@ -11,7 +11,7 @@ pipeline {
             steps { bat 'npm run-script lint' }
         }
         stage('Unit tests') {
-            steps { bat 'npm run-script test' }
+            steps { bat 'npm run-script test -- --no-watch --no-progress --browsers=ChromeHeadlessCI' }
         }
       }
     }
